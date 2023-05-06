@@ -36,8 +36,8 @@ This repository contains two types of bayesian lauer implementation:
 
 ### Directory Structure:
 `layers/`:  Contains `ModuleWrapper`, `FlattenLayer`, `BBBLinear` and `BBBConv2d`.  
-`models/BayesianModels/`: Contains standard Bayesian models (BBBLeNet, BBBAlexNet, BBB3Conv3FC).  
-`models/NonBayesianModels/`: Contains standard Non-Bayesian models (LeNet, AlexNet).  
+`models/BayesianModels/`: Contains standard Bayesian models (BBBVGG11, BBBAlexNet, BBB4Conv3FC,BBBResnet34).  
+`models/NonBayesianModels/`: Contains standard Non-Bayesian models (VGG11, AlexNet,4Conv3FC,Resnet34).  
 `checkpoints/`: Checkpoint directory: Models will be saved here.  
 `tests/`: Basic unittest cases for layers and models.  
 `main_bayesian.py`: Train and Evaluate Bayesian models.  
@@ -46,6 +46,6 @@ This repository contains two types of bayesian lauer implementation:
 `config_frequentist.py`: Hyperparameters for `main_frequentist` file.  
 `AttackingModels.ipynb` : Attacks performed on BNNs and plot generated
 
-A detailed Report [here](Robustness_Report.pdf) written as a part of course project for CS690- Deep Learning Course at Purdue University is given.
+A detailed Report [here](Robustness_Report.pdf) written as a part of course project for CSL4030 - Dependable AI at IIT Jodhpur.
 
 
