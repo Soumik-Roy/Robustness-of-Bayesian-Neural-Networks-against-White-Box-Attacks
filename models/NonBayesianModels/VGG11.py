@@ -13,7 +13,7 @@ class VGG11(nn.Module):
         super(VGG11, self).__init__()
         self.in_channels = inputs
         self.num_classes = num_classes
-        self.linear_input_size=4*4*3*512
+        self.linear_input_size=inputs*2048
         # convolutional layers 
         if activation_type=='softplus':
             self.act = nn.Softplus
