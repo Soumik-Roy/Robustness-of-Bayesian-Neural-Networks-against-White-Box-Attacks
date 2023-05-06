@@ -1,15 +1,12 @@
-import torch.nn as nn
 import math
+import torch.nn as nn
 from layers import BBB_Linear, BBB_Conv2d
 from layers import BBB_LRT_Linear, BBB_LRT_Conv2d
 from layers import FlattenLayer, ModuleWrapper
 
-
-class BBBAlexNet(ModuleWrapper):
-    '''The architecture of AlexNet with Bayesian Layers'''
-
+class BBB4Conv3FC(ModuleWrapper):
     def __init__(self, outputs, inputs, priors, layer_type='lrt', activation_type='softplus'):
-        super(BBBAlexNet, self).__init__()
+        super(BBB4Conv3FC, self).__init__()
 
         self.num_classes = outputs
         self.layer_type = layer_type
@@ -31,23 +28,18 @@ class BBBAlexNet(ModuleWrapper):
         else:
             raise ValueError("Only softplus or relu supported")
 
-        self.conv1 = BBBConv2d(inputs, 64, 11, stride=4, padding=5, bias=True, priors=self.priors)
+        self.conv1 = BBBConv2d(inputs, 32, 5, padding=2, bias=True, priors=self.priors)
         self.act1 = self.act()
-        self.pool1 = nn.MaxPool2d(kernel_size=2, stride=2)
-
-        self.conv2 = BBBConv2d(64, 192, 5, padding=2, bias=True, priors=self.priors)
+        self.conv2 = BBBConv2d(32, 64, 7, padding=2, bias=True, priors=self.priors)
         self.act2 = self.act()
-        self.pool2 = nn.MaxPool2d(kernel_size=2, stride=2)
-
-        self.conv3 = BBBConv2d(192, 384, 3, padding=1, bias=True, priors=self.priors)
+        self.conv3 = BBBConv2d(64, 128, 7, padding=1, bias=True, priors=self.priors)
         self.act3 = self.act()
-
-        self.conv4 = BBBConv2d(384, 256, 3, padding=1, bias=True, priors=self.priors)
+        self.conv4 = BBBConv2d(128, 32, 3, padding=2, bias=True, priors=self.priors)
         self.act4 = self.act()
-
-        self.conv5 = BBBConv2d(256, 128, 3, padding=1, bias=True, priors=self.priors)
+        self.pool = nn.MaxPool2d(4)
+        self.flatten = FlattenLayer(15 *15 * 32)
+        self.fc1 = BBBLinear(15* 15 * 32, 2048, bias=True, priors=self.priors)
         self.act5 = self.act()
-        self.pool3 = nn.MaxPool2d(kernel_size=2, stride=2)
-
-        self.flatten = FlattenLayer(1 * 1 * 128)
-        self.classifier = BBBLinear(1 * 1 * 128, outputs, bias=True, priors=self.priors)
+        self.fc2 = BBBLinear(2048, 2048, bias=True, priors=self.priors)
+        self.act6 = self.act()
+        self.fc3 = BBBLinear(2048, outputs, bias=True, priors=self.priors)
