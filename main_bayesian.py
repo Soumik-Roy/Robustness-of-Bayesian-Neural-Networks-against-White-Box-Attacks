@@ -13,23 +13,26 @@ import data
 import utils
 import metrics
 import config_bayesian as cfg
-from models.BayesianModels.Bayesian3Conv3FC import BBB3Conv3FC
-from models.BayesianModels.BayesianAlexNet import BBBAlexNet
-from models.BayesianModels.BayesianLeNet import BBBLeNet
+from Models.BayesianModels.Bayesian4Conv3FC import BBB4Conv3FC
+from Models.BayesianModels.BayesianResnet34 import BBBresnet34
+from Models.BayesianModels.BayesianAlexNet import BBBAlexNet
+from Models.BayesianModels.BayesianVGG11 import BBBVGG11
 
 
 # CUDA settings
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 def getModel(net_type, inputs, outputs, priors, layer_type, activation_type):
-    if (net_type == 'lenet'):
-        return BBBLeNet(outputs, inputs, priors, layer_type, activation_type)
+    if (net_type == 'resnet'):
+        return BBBresnet34(priors, outputs, inputs, layer_type, activation_type)
     elif (net_type == 'alexnet'):
         return BBBAlexNet(outputs, inputs, priors, layer_type, activation_type)
-    elif (net_type == '3conv3fc'):
-        return BBB3Conv3FC(outputs, inputs, priors, layer_type, activation_type)
+    elif (net_type == '4conv3fc'):
+        return BBB4Conv3FC(outputs, inputs, priors, layer_type, activation_type)
+    elif (net_type == 'vgg11'):
+        return BBB4Conv3FC(outputs, inputs, priors, layer_type, activation_type)
     else:
-        raise ValueError('Network should be either [LeNet / AlexNet / 3Conv3FC')
+        raise ValueError('Network should be either [ResNet34 / AlexNet / 4conv3fc / vgg11')
 
 
 def train_model(net, optimizer, criterion, trainloader, beta_type,num_ens=1):

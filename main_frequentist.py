@@ -9,14 +9,15 @@ import torch.nn as nn
 from torch.optim import Adam, lr_scheduler,SGD
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm 
-
+import random
 import data
 import utils
 import metrics
 import config_frequentist as cfg
-from models.NonBayesianModels.AlexNet import AlexNet
-from models.NonBayesianModels.LeNet import LeNet
-from models.NonBayesianModels.ThreeConvThreeFC import ThreeConvThreeFC
+from Models.NonBayesianModels.FourConv3FC import FourConvThreeFC
+from Models.NonBayesianModels.Resnet34 import resnet34
+from Models.NonBayesianModels.AlexNet import AlexNet
+from Models.NonBayesianModels.VGG11 import VGG11
 def set_all_seeds(seed):
     os.environ["PL_GLOBAL_SEED"] = str(seed)
     random.seed(seed)
@@ -31,14 +32,17 @@ import numpy as np
 
 
 def getModel(net_type, inputs, outputs,activation):
-    if (net_type == 'lenet'):
-        return LeNet(outputs, inputs,activation)
+    if (net_type == 'resnet'):
+        return resnet34(outputs, inputs, activation)
     elif (net_type == 'alexnet'):
-        return AlexNet(outputs, inputs,activation)
-    elif (net_type == '3conv3fc'):
-        return ThreeConvThreeFC(outputs, inputs,activation)
+        return AlexNet(outputs, inputs, activation)
+    elif (net_type == '4conv3fc'):
+        return FourConvThreeFC(outputs, inputs, activation)
+    elif (net_type == 'vgg11'):
+        return VGG11(outputs, inputs, activation)
     else:
-        raise ValueError('Network should be either [LeNet / AlexNet / 3Conv3FC')
+        raise ValueError('Network should be either [ResNet34 / AlexNet / 4conv3fc / vgg11')
+
 
 
 def train_model(model, optimizer, criterion, trainloader):
@@ -191,7 +195,7 @@ def run(dataset, net_type):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = "PyTorch Frequentist Model Training")
-    parser.add_argument('--net_type', default='lenet', type=str, help='model')
+    parser.add_argument('--net_type', default='vgg11', type=str, help='model')
     parser.add_argument('--dataset', default='MNIST', type=str, help='dataset = [MNIST/CIFAR10/CIFAR100]')
     args = parser.parse_args()
 
