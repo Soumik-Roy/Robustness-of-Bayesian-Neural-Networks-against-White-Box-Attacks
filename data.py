@@ -31,7 +31,7 @@ def getDataset(dataset,model):
     #                                    transforms.RandomCrop((64, 64)),
     #                                    transforms.ToTensor()])
     # else:
-    if model == 'vgg':
+    if model == 'vgg11':
         transform_mnist = transforms.Compose([
             transforms.Resize((64, 64)),
             transforms.ToTensor(),
@@ -41,7 +41,7 @@ def getDataset(dataset,model):
             transforms.ToTensor(),
         ])
         
-    elif model == 'cnn':
+    elif model == '4conv3fc':
         transform_mnist = transforms.Compose([
             transforms.Resize((64, 64)),
             transforms.ToTensor(),
@@ -50,7 +50,7 @@ def getDataset(dataset,model):
             transforms.Resize((64, 64)),
             transforms.ToTensor(),
         ])
-    elif model == 'resnet34':
+    elif model == 'resnet':
         transform_mnist = transforms.Compose([
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
