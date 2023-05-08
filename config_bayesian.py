@@ -16,7 +16,7 @@ priors={
 
 n_epochs = 100
 lr_start = 0.01
-num_workers = 4
+num_workers = 2
 valid_size = 0.2
 batch_size = 256
 train_ens = 1

@@ -148,7 +148,7 @@ def run(dataset, net_type):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = "PyTorch Bayesian Model Training")
-    parser.add_argument('--net_type', default='lenet', type=str, help='model')
+    parser.add_argument('--net_type', default='resnet', type=str, help='model')
     parser.add_argument('--dataset', default='MNIST', type=str, help='dataset = [MNIST/CIFAR10/CIFAR100]')
     args = parser.parse_args()
 
