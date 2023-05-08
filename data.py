@@ -31,14 +31,42 @@ def getDataset(dataset,model):
     #                                    transforms.RandomCrop((64, 64)),
     #                                    transforms.ToTensor()])
     # else:
-    transform_mnist = transforms.Compose([
-        transforms.Resize((32, 32)),
-        transforms.ToTensor(),
+    if model == 'vgg':
+        transform_mnist = transforms.Compose([
+            transforms.Resize((64, 64)),
+            transforms.ToTensor(),
+            ])
+        transform_cifar = transforms.Compose([
+            transforms.Resize((64, 64)),
+            transforms.ToTensor(),
         ])
-
-    transform_cifar = transforms.Compose([
-        transforms.Resize((32, 32)),
-        transforms.ToTensor(),
+        
+    elif model == 'cnn':
+        transform_mnist = transforms.Compose([
+            transforms.Resize((64, 64)),
+            transforms.ToTensor(),
+            ])
+        transform_cifar = transforms.Compose([
+            transforms.Resize((64, 64)),
+            transforms.ToTensor(),
+        ])
+    elif model == 'resnet34':
+        transform_mnist = transforms.Compose([
+            transforms.Resize((224, 224)),
+            transforms.ToTensor(),
+            ])
+        transform_cifar = transforms.Compose([
+            transforms.Resize((224, 224)),
+            transforms.ToTensor(),
+        ])
+    elif model == 'alexnet':
+        transform_mnist = transforms.Compose([
+            transforms.Resize((64, 64)),
+            transforms.ToTensor(),
+            ])
+        transform_cifar = transforms.Compose([
+            transforms.Resize((64, 64)),
+            transforms.ToTensor(),
         ])
 
     if(dataset == 'CIFAR10'):
