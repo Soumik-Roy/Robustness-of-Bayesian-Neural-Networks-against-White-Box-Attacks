@@ -4,14 +4,9 @@ from layers import BBB_Linear, BBB_Conv2d
 from layers import BBB_LRT_Linear, BBB_LRT_Conv2d
 from layers import FlattenLayer, ModuleWrapper
 
-class BBB3Conv3FC(ModuleWrapper):
-    """
-
-    Simple Neural Network having 3 Convolution
-    and 3 FC layers with Bayesian layers.
-    """
+class BBB4Conv3FC(ModuleWrapper):
     def __init__(self, outputs, inputs, priors, layer_type='lrt', activation_type='softplus'):
-        super(BBB3Conv3FC, self).__init__()
+        super(BBB4Conv3FC, self).__init__()
 
         self.num_classes = outputs
         self.layer_type = layer_type
