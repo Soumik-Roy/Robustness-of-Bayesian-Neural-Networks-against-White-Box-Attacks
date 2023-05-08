@@ -104,13 +104,13 @@ class ResNet34(nn.Module):
         x = self.layer2(x)
         x = self.layer3(x)
         x = self.layer4(x)
-        if self.inputs == 3:
-            x = self.avgpool(x)
+        #if self.inputs == 3:
+        x = self.avgpool(x)
 
         x = x.view(x.size(0), -1)
         logits = self.fc(x)
-        probas = F.softmax(logits, dim=1)
-        return logits, probas
+        #probas = F.softmax(logits, dim=1)
+        return logits
     
 def resnet34(outputs, inputs, activation):
     model = ResNet34(block=BasicBlock, 
