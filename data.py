@@ -33,40 +33,47 @@ def getDataset(dataset,model):
     # else:
     if model == 'vgg11':
         transform_mnist = transforms.Compose([
-            transforms.Resize((64, 64)),
+            transforms.Resize((224, 224)),
             transforms.ToTensor(),
+            transforms.Normalize((0.1307,), (0.3081,))
             ])
         transform_cifar = transforms.Compose([
-            transforms.Resize((64, 64)),
+            transforms.Resize((224, 224)),
             transforms.ToTensor(),
         ])
         
     elif model == '4conv3fc':
         transform_mnist = transforms.Compose([
-            transforms.Resize((64, 64)),
+            transforms.Resize((32, 32)),
             transforms.ToTensor(),
+            transforms.Normalize((0.1307,), (0.3081,))
             ])
         transform_cifar = transforms.Compose([
-            transforms.Resize((64, 64)),
+            transforms.Resize((32, 32)),
             transforms.ToTensor(),
+            transforms.Normalize((0.4914, 0.4822, 0.4465), (0.247, 0.243, 0.261))
         ])
     elif model == 'resnet':
         transform_mnist = transforms.Compose([
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
+            transforms.Normalize((0.1307,), (0.3081,))
             ])
         transform_cifar = transforms.Compose([
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
+            transforms.Normalize((0.4914, 0.4822, 0.4465), (0.247, 0.243, 0.261))
         ])
     elif model == 'alexnet':
         transform_mnist = transforms.Compose([
-            transforms.Resize((64, 64)),
+            transforms.Resize((227, 227)),
             transforms.ToTensor(),
+            transforms.Normalize((0.1307,), (0.3081,))
             ])
         transform_cifar = transforms.Compose([
-            transforms.Resize((64, 64)),
+            transforms.Resize((227, 227)),
             transforms.ToTensor(),
+            transforms.Normalize((0.4914, 0.4822, 0.4465), (0.247, 0.243, 0.261))
         ])
 
     if(dataset == 'CIFAR10'):
