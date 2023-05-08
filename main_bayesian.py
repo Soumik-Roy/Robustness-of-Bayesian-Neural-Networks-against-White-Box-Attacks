@@ -41,7 +41,7 @@ def train_model(net, optimizer, criterion, trainloader, beta_type,num_ens=1):
     accs = []
     kl_list = []
     counter=0
-    for i, (inputs, labels) in enumerate(trainloader, 1):
+    for i, (inputs, labels) in tqdm(enumerate(trainloader, 1)):
         counter+=1
         optimizer.zero_grad()
 
