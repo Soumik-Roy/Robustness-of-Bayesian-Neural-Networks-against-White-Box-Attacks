@@ -32,12 +32,12 @@ def getDataset(dataset,model):
     #                                    transforms.ToTensor()])
     # else:
     transform_mnist = transforms.Compose([
-        transforms.Resize((224, 224)),
+        transforms.Resize((32, 32)),
         transforms.ToTensor(),
         ])
 
     transform_cifar = transforms.Compose([
-        transforms.Resize((224, 224)),
+        transforms.Resize((32, 32)),
         transforms.ToTensor(),
         ])
 
