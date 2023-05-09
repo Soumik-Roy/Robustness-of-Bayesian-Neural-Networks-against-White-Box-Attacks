@@ -49,5 +49,5 @@ class BBBAlexNet(ModuleWrapper):
         self.act5 = self.act()
         self.pool3 = nn.MaxPool2d(kernel_size=2, stride=2)
 
-        self.flatten = FlattenLayer(1 * 1 * 128)
-        self.classifier = BBBLinear(1 * 1 * 128, outputs, bias=True, priors=self.priors)
+        self.flatten = FlattenLayer(2 * 2 * 128)
+        self.classifier = BBBLinear(2 * 2 * 128, outputs, bias=True, priors=self.priors)

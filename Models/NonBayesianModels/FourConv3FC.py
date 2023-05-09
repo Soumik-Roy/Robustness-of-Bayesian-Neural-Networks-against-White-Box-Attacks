@@ -21,21 +21,21 @@ class FourConvThreeFC(nn.Module):
         self.features = nn.Sequential(
             nn.Conv2d(inputs, 32, 5, stride=1, padding=2),
             self.act,
-            nn.Conv2d(32, 64, 7, stride=1, padding=2),
+            nn.MaxPool2d(kernel_size=3, stride=2),
+            nn.Conv2d(32, 64, 5, stride=1, padding=2),
             self.act,
-            nn.Conv2d(64, 128, 7, stride=1, padding=1),
+            nn.MaxPool2d(kernel_size=3, stride=2),
+            nn.Conv2d(64, 128, 5, stride=1, padding=1),
             self.act,
-            nn.Conv2d(128, 32, 3, stride=1, padding=2),
-            self.act,
-            nn.MaxPool2d(4),
+            nn.MaxPool2d(kernel_size=3, stride=2),
         )
         self.classifier = nn.Sequential(
-            FlattenLayer(15 * 15 * 32),
-            nn.Linear(15 * 15 * 32, 2048),
+            FlattenLayer(2 * 2 * 128),
+            nn.Linear(2 * 2 * 128, 1000),
             self.act,
-            nn.Linear(2048, 2048),
+            nn.Linear(1000, 1000),
             self.act,
-            nn.Linear(2048, outputs)
+            nn.Linear(1000, outputs)
         )
 
     def forward(self, x):

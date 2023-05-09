@@ -68,7 +68,7 @@ class ResNet34(ModuleWrapper):
         
         if activation_type=='softplus':
             self.act = nn.Softplus()
-        elif activation_type=='relu':
+        elif activation_type=='relu' or activation_type==None:
             self.act = nn.ReLU(inplace=True)
         else:
             raise ValueError("Only softplus or relu supported")

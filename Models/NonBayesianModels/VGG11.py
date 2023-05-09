@@ -23,37 +23,43 @@ class VGG11(nn.Module):
             raise ValueError("Only softplus or relu supported")
         self.conv_layers = nn.Sequential(
             nn.Conv2d(self.in_channels, 64, kernel_size=3, padding=1),
-            self.act(),
+            nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2),
+            
             nn.Conv2d(64, 128, kernel_size=3, padding=1),
-            self.act(),
+            nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2),
+
             nn.Conv2d(128, 256, kernel_size=3, padding=1),
-            self.act(),
-            nn.Dropout(p=0.5),
+            nn.ReLU(),
+
             nn.Conv2d(256, 256, kernel_size=3, padding=1),
-            self.act(),
+            nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2),
+
             nn.Conv2d(256, 512, kernel_size=3, padding=1),
-            self.act(),
-            nn.Dropout(p=0.5),
-            # nn.Conv2d(512, 512, kernel_size=3, padding=1),
-            # self.act(),
-            nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.ReLU(),
+            
             nn.Conv2d(512, 512, kernel_size=3, padding=1),
-            self.act(),
-            nn.Dropout(p=0.5),
-            # nn.Conv2d(512, 512, kernel_size=3, padding=1),
-            # self.act(),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2),
+
+            nn.Conv2d(512, 512, kernel_size=3, padding=1),
+            nn.ReLU(),
+
+            nn.Conv2d(512, 512, kernel_size=3, padding=1),
+            nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2)
+
         )
+        # fully connected linear layers
         self.linear_layers = nn.Sequential(
-            nn.Linear(in_features=self.linear_input_size, out_features=4096),
-            self.act(),
-            nn.Dropout(p=0.5),
-            # nn.Linear(in_features=4096, out_features=4096),
-            # self.act(),
-            # nn.Dropout(p=0.5),
+            nn.Linear(in_features=512*7*7, out_features=4096),
+            nn.ReLU(),
+            nn.Dropout(0.5),
+            nn.Linear(in_features=4096, out_features=4096),
+            nn.ReLU(),
+            nn.Dropout(0.5),
             nn.Linear(in_features=4096, out_features=self.num_classes)
         )
     def forward(self, x):
