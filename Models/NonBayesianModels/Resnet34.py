@@ -104,7 +104,6 @@ class ResNet34(nn.Module):
         x = self.layer2(x)
         x = self.layer3(x)
         x = self.layer4(x)
-        #if self.inputs == 3:
         x = self.avgpool(x)
 
         x = x.view(x.size(0), -1)
