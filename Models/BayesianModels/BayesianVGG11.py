@@ -46,17 +46,30 @@ class BBBVGG11(ModuleWrapper):
         self.act4 = self.act()
         self.pool3 = nn.MaxPool2d(kernel_size=2, stride=2)
         
-        self.conv5 = BBBConv2d(256, 512, 3, padding=1, bias=True, priors=self.priors)
+        self.conv4 = BBBConv2d(256, 512, 3, padding=1, bias=True, priors=self.priors)
+        self.act4 = self.act()
+        #self.pool4 = nn.MaxPool2d(kernel_size=2, stride=2)
+        
+        self.conv5 = BBBConv2d(512, 512, 3, padding=1, bias=True, priors=self.priors)
         self.act5 = self.act()
         self.pool4 = nn.MaxPool2d(kernel_size=2, stride=2)
-        
+
         self.conv6 = BBBConv2d(512, 512, 3, padding=1, bias=True, priors=self.priors)
         self.act6 = self.act()
+        #self.pool4 = nn.MaxPool2d(kernel_size=2, stride=2)
+        
+        self.conv7 = BBBConv2d(512, 512, 3, padding=1, bias=True, priors=self.priors)
+        self.act7 = self.act()
         self.pool5 = nn.MaxPool2d(kernel_size=2, stride=2)
         
         self.flatten = FlattenLayer(512*7*7)
         self.fc1 = BBBLinear(512*7*7, 4096, bias=True, priors=self.priors)
-        self.act3 = self.act()
+        self.act8 = self.act()
+        self.drop1 = nn.Dropout(p=0.5)
 
-        self.fc2 = BBBLinear(4096, outputs, bias=True, priors=self.priors)
+        self.fc2 = BBBLinear(4096, 4096, bias=True, priors=self.priors)
+        self.act9 = self.act()
+        self.drop2 = nn.Dropout(p=0.5)
+
+        self.fc3 = BBBLinear(4096, outputs, bias=True, priors=self.priors)
  
