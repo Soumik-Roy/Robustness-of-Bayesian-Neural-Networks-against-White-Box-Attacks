@@ -16,7 +16,7 @@ import utils
 import metrics
 
 import config_bayesian as cfg2
-import config_frequentist as cfg
+import config_normal as cfg
 
 import torch
 import numpy as np

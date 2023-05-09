@@ -1,18 +1,22 @@
 from torch.nn import functional as F
 
-from models.BayesianModels.Bayesian3Conv3FC import BBB3Conv3FC
-from models.BayesianModels.BayesianAlexNet import BBBAlexNet
-from models.BayesianModels.BayesianLeNet import BBBLeNet
-from models.NonBayesianModels.AlexNet import AlexNet
-from models.NonBayesianModels.LeNet import LeNet
-from models.NonBayesianModels.ThreeConvThreeFC import ThreeConvThreeFC
+from Models.BayesianModels.BayesianLeNet import BBBLeNet
+from Models.NonBayesianModels.LeNet import LeNet
+from Models.BayesianModels.Bayesian3Conv3FC import BBB4Conv3FC
+from Models.BayesianModels.BayesianResnet34 import BBBresnet34
+from Models.BayesianModels.BayesianAlexNet import BBBAlexNet
+from Models.BayesianModels.BayesianVGG11 import BBBVGG11
+from Models.NonBayesianModels.FourConv3FC import FourConvThreeFC
+from Models.NonBayesianModels.Resnet34 import resnet34
+from Models.NonBayesianModels.AlexNet import AlexNet
+from Models.NonBayesianModels.VGG11 import VGG11
 
 import os.path
 import data
 import utils
 import metrics
 import config_bayesian as cfg2
-import config_frequentist as cfg
+import config_normal as cfg
 import torch
 import numpy as np
 import torch.nn as nn
@@ -28,7 +32,7 @@ def getBModel(net_type, inputs, outputs, priors, layer_type, activation_type):
     elif (net_type == 'Balexnet'):
         return BBBAlexNet(outputs, inputs, priors, layer_type, activation_type)
     elif (net_type == 'B3conv3fc'):
-        return BBB3Conv3FC(outputs, inputs, priors, layer_type, activation_type)
+        return BBB4Conv3FC(outputs, inputs, priors, layer_type, activation_type)
     else:
         raise ValueError('Network should be either [LeNet / AlexNet / 3Conv3FC')
 
@@ -38,7 +42,7 @@ def getFModel(net_type, inputs, outputs):
     elif (net_type == 'alexnet'):
         return AlexNet(outputs, inputs)
     elif (net_type == '3conv3fc'):
-        return ThreeConvThreeFC(outputs, inputs)
+        return FourConvThreeFC(outputs, inputs)
     else:
         raise ValueError('Network should be either [LeNet / AlexNet / 3Conv3FC')
 

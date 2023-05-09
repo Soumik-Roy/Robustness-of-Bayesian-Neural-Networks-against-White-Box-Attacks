@@ -13,7 +13,7 @@ import random
 import data
 import utils
 import metrics
-import config_frequentist as cfg
+import config_normal as cfg
 from Models.NonBayesianModels.FourConv3FC import FourConvThreeFC
 from Models.NonBayesianModels.Resnet34 import resnet34
 from Models.NonBayesianModels.AlexNet import AlexNet
