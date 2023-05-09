@@ -13,7 +13,7 @@ import data
 import utils
 import metrics
 import config_bayesian as cfg
-from Models.BayesianModels.Bayesian4Conv3FC import BBB4Conv3FC
+from Models.BayesianModels.Bayesian3Conv3FC import BBB4Conv3FC
 from Models.BayesianModels.BayesianResnet34 import BBBresnet34
 from Models.BayesianModels.BayesianAlexNet import BBBAlexNet
 from Models.BayesianModels.BayesianVGG11 import BBBVGG11

@@ -6,65 +6,52 @@ import argparse
 import torch
 import numpy as np
 import torch.nn as nn
-from torch.optim import Adam, lr_scheduler
+from torch.optim import Adam, lr_scheduler,SGD
 from torch.utils.tensorboard import SummaryWriter
-from tqdm import tqdm
-import time
+from tqdm import tqdm 
 import random
-
-
 import data
 import utils
 import metrics
-import config as cfg
-from models.NonBayesianModels.AlexNet import AlexNet
-from models.NonBayesianModels.LeNet import LeNet
-from models.NonBayesianModels.ThreeConvThreeFC import ThreeConvThreeFC
-from models.NonBayesianModels.VGG11 import VGG11
-from models.NonBayesianModels.CNN import CNN
-from models.NonBayesianModels.nAlexnet import nAlexNet
-# CUDA settings
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-if torch.cuda.is_available():
-    torch.backends.cudnn.deterministic = True
-from torch.utils.tensorboard import SummaryWriter
-
-import numpy as np
-
+import config_frequentist as cfg
+from Models.NonBayesianModels.FourConv3FC import FourConvThreeFC
+from Models.NonBayesianModels.Resnet34 import resnet34
+from Models.NonBayesianModels.AlexNet import AlexNet
+from Models.NonBayesianModels.VGG11 import VGG11
 def set_all_seeds(seed):
     os.environ["PL_GLOBAL_SEED"] = str(seed)
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
-def set_deterministic():
-    if torch.cuda.is_available():
-        torch.backends.cudnn.benchmark = False
-        torch.backends.cudnn.deterministic = True
-    torch.set_deterministic(True)
-    
+# CUDA settings
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+from torch.utils.tensorboard import SummaryWriter
+import numpy as np
+
+
 def getModel(net_type, inputs, outputs,activation):
-    if (net_type == 'lenet'):
-        return LeNet(outputs, inputs,activation)
+    if (net_type == 'resnet'):
+        return resnet34(outputs, inputs, activation)
     elif (net_type == 'alexnet'):
-        return AlexNet(outputs, inputs,activation)
-    elif (net_type == '3conv3fc'):
-        return ThreeConvThreeFC(outputs,inputs,activation)
-    elif (net_type == 'vgg'):
-        return VGG11(outputs,inputs,activation)
-    elif (net_type == 'cnn'):
-        return CNN(outputs,inputs,activation)
-    elif (net_type == 'nalexnet'):
-        return nAlexNet(outputs,inputs,activation)
+        return AlexNet(outputs, inputs, activation)
+    elif (net_type == '4conv3fc'):
+        return FourConvThreeFC(outputs, inputs, activation)
+    elif (net_type == 'vgg11'):
+        return VGG11(outputs, inputs, activation)
     else:
-        raise ValueError('Network should be either [LeNet / AlexNet / 3Conv3FC')
-        
+        raise ValueError('Network should be either [ResNet34 / AlexNet / 4conv3fc / vgg11')
+
+
+
 def train_model(model, optimizer, criterion, trainloader):
     model.train()
     # print('Training')
     train_running_loss = 0.0
     train_running_correct = 0
     counter = 0
+    
     for i, data in tqdm(enumerate(trainloader), total=len(trainloader)):
         counter += 1
         image, labels = data
@@ -77,13 +64,15 @@ def train_model(model, optimizer, criterion, trainloader):
         loss = criterion(outputs, labels)
         train_running_loss += loss.item()
         # calculate the accuracy
+        
+        loss.backward()
+        optimizer.step()
         _, preds = torch.max(outputs.data, 1)
         train_running_correct += (preds == labels).sum().item()
         # epoch_acc = torch.tensor(torch.sum(preds == labels).item() / len(preds))
-        loss.backward()
-        optimizer.step()
-    
+        # train_running_correct.append(epoch_acc) 
     epoch_loss = train_running_loss / counter
+    # acc = torch.mean(train_running_correct)
     epoch_acc = 100. * (train_running_correct / len(trainloader.dataset))
     return epoch_loss, epoch_acc
 
@@ -125,15 +114,16 @@ def validate_model(model, criterion, testloader):
             # calculate the accuracy
             _, preds = torch.max(outputs.data, 1)
             valid_running_correct += (preds == labels).sum().item()
-            # epoch_acc = torch.tensor(torch.sum(preds == labels).item() / len(preds))
             # calculate the accuracy for each class
             # correct  = (preds == labels).squeeze()
             # for i in range(len(preds)):
             #     label = labels[i]
             #     class_correct[label] += correct[i].item()
             #     class_total[label] += 1
-        
+            # epoch_acc = torch.tensor(torch.sum(preds == labels).item() / len(preds))
+            # valid_running_correct
     epoch_loss = valid_running_loss / counter
+    # acc = torch.mean(valid_running_correct)
     epoch_acc = 100. * (valid_running_correct / len(testloader.dataset))
     return epoch_loss, epoch_acc
 
@@ -149,34 +139,31 @@ def validate_model(model, criterion, testloader):
 #         accs.append(metrics.acc(output.detach(), target))
 #     return valid_loss, np.mean(accs)
 
-
 def run(dataset, net_type):
-    set_all_seeds(1)
+
     # Hyper Parameter settings
     n_epochs = cfg.n_epochs
     lr = cfg.lr
     num_workers = cfg.num_workers
     valid_size = cfg.valid_size
     batch_size = cfg.batch_size
-    activation= cfg.activation_type
+    activation=cfg.activation
     title= f'{net_type}-{dataset}'
     writer = SummaryWriter(title)
 
     trainset, testset, inputs, outputs = data.getDataset(dataset,net_type)
     train_loader, valid_loader, test_loader = data.getDataloader(
         trainset, testset, valid_size, batch_size, num_workers)
-
-    ckpt_dir = f'ccheckpoints/{dataset}/frequentist'
-    ckpt_name = f'ccheckpoints/{dataset}/frequentist/model_{net_type}_{activation}.pt'
-    
     net = getModel(net_type, inputs, outputs,activation).to(device)
-    
+
+    ckpt_dir = f'checkpoints/{dataset}/frequentist'
+    ckpt_name = f'checkpoints/{dataset}/frequentist/model_{net_type}.pt'
+
+    if not os.path.exists(ckpt_dir):
+        os.makedirs(ckpt_dir, exist_ok=True)
     # if os.path.exists(ckpt_name):
     #     net.load_state_dict(torch.load(ckpt_name))
         
-    if not os.path.exists(ckpt_dir):
-        os.makedirs(ckpt_dir, exist_ok=True)
-
     criterion = nn.CrossEntropyLoss()
     optimizer = Adam(net.parameters(), lr=lr)
     lr_sched = lr_scheduler.ReduceLROnPlateau(optimizer, patience=6, verbose=True)
@@ -186,6 +173,7 @@ def run(dataset, net_type):
         train_loss, train_acc = train_model(net, optimizer, criterion, train_loader)
         valid_loss, valid_acc = validate_model(net, criterion, valid_loader)
         lr_sched.step(valid_loss)
+
         # train_loss = train_loss/len(train_loader.dataset)
         # valid_loss = valid_loss/len(valid_loader.dataset)
         writer.add_scalar('Loss/train', train_loss, epoch)
@@ -207,8 +195,8 @@ def run(dataset, net_type):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = "PyTorch Frequentist Model Training")
-    parser.add_argument('--net_type', default='lenet', type=str, help='model = [vgg/lenet/alexnet/3conv3fc]')
-    parser.add_argument('--dataset', default='MNIST', type=str, help='dataset = [MNIST/CIFAR10]')
+    parser.add_argument('--net_type', default='vgg11', type=str, help='model')
+    parser.add_argument('--dataset', default='MNIST', type=str, help='dataset = [MNIST/CIFAR10/CIFAR100]')
     args = parser.parse_args()
 
     run(args.dataset, args.net_type)
